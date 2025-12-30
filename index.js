@@ -40,6 +40,51 @@ function closecontact(){
         $("#contact_container").css("display","none");
     },800);
 }
+function showgallery(){
+    $("#gallery_container").css("display","inherit");
+    $("#gallery_container").addClass("animated zoomIn");
+    setTimeout(function(){
+        $("#gallery_container").removeClass("animated zoomIn");
+    },800);
+}
+function closegallery(){
+    $("#gallery_container").addClass("animated slideOutDown");
+    setTimeout(function(){
+        $("#gallery_container").removeClass("animated slideOutDown");
+        $("#gallery_container").css("display","none");
+    },800);
+}
+
+/* Gallery lightbox behavior */
+document.addEventListener('DOMContentLoaded', function(){
+    var galleryImgs = Array.prototype.slice.call(document.querySelectorAll('.gallery-grid img'));
+    var lightbox = document.getElementById('lightbox');
+    var lightboxImg = document.getElementById('lightbox-img');
+    var captionEl = document.querySelector('.lightbox-caption');
+    var currentIndex = 0;
+
+    function openLightbox(idx){
+        var el = galleryImgs[idx];
+        if(!el) return;
+        currentIndex = idx;
+        lightboxImg.src = el.src;
+        captionEl.textContent = el.dataset.caption || el.alt || '';
+        lightbox.style.display = 'flex';
+    }
+    window.openLightbox = openLightbox;
+    window.closeLightbox = function(){ lightbox.style.display = 'none'; };
+    window.lightboxNext = function(){ openLightbox((currentIndex + 1) % galleryImgs.length); };
+    window.lightboxPrev = function(){ openLightbox((currentIndex - 1 + galleryImgs.length) % galleryImgs.length); };
+
+    galleryImgs.forEach(function(img, i){ img.addEventListener('click', function(){ openLightbox(i); }); });
+
+    document.addEventListener('keydown', function(e){
+        if(!lightbox || lightbox.style.display !== 'flex') return;
+        if(e.key === 'Escape') window.closeLightbox();
+        if(e.key === 'ArrowRight') window.lightboxNext();
+        if(e.key === 'ArrowLeft') window.lightboxPrev();
+    });
+});
 setTimeout(function(){
     $("#loading").addClass("animated fadeOut");
     setTimeout(function(){
